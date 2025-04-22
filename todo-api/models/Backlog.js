@@ -1,9 +1,8 @@
 const mongoose = require('mongoose')
 
 const backlogSchema = mongoose.Schema({
-    tareas:{
-        type: mongoose.Schema.Types.ObjectId, ref: "Task", default: []
-    }
+    tareas:[{
+        type: mongoose.Schema.Types.ObjectId, ref: "Task"}], default: []
 })
 
 

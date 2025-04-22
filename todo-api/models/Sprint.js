@@ -9,9 +9,8 @@ const sprintSchema = mongoose.Schema({
         type: String,
         required: true
     },
-    tareas:{
-        type: mongoose.Schema.Types.ObjectId, ref: "Task", default: []
-    }
+    tareas:[{
+        type: mongoose.Schema.Types.ObjectId, ref: "Task"}], default: []
 })
 
 const Sprint = mongoose.model('Sprint', sprintSchema)

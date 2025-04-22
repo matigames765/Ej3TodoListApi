@@ -10,6 +10,8 @@ const tasksRoutes = require('./routes/tasks')
 
 const app = express()
 
+const {getBacklogById, existBacklog} = require('./controllers/backlog.controller')
+
 app.use(bodyParser.json())
 
 require('dotenv').config()
@@ -21,6 +23,8 @@ mongoose.connect(process.env.DB_URL, {dbName: process.env.DB_NAME})
 .catch(() => {
     console.log("No se pudo conectar a la base de datos")
 })
+
+existBacklog()
 
 app.use('/task', tasksRoutes)
 app.use('/', backlogRoutes)

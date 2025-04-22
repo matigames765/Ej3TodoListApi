@@ -6,6 +6,10 @@ const Sprint = require('../models/Sprint')
 
 const Task = require('../models/Task')
 
+const getSprintById = require('../controllers/sprint.controller')
+
+const getTaskById = require('../controllers/task.controller')
+
 router.get('/sprints', async(req, res) => {
     try{
         const sprints = await Sprint.find().populate('tareas')
@@ -16,16 +20,10 @@ router.get('/sprints', async(req, res) => {
     }
 })
 
-router.get('/sprints/:id', async(req, res) => {
+router.get('/sprints/:id',getSprintById,  async(req, res) => {
     try{
-        const {id} = req.params
-
-        const sprint = await Sprint.findById(id).populate('tareas')
-
-        if(!sprint){
-            res.status(404).json({message: "No fue encontrado el sprint con ese id"})
-            return
-        }
+        
+        const sprint = res.sprint
 
         res.status(200).json(sprint)
     }catch(error){
@@ -90,9 +88,11 @@ router.delete('/sprints/:id', async(req, res) => {
 
 //preguntar por este metodo
 
-router.put('/sprints/:id/add-task/:taskId', async(req, res) => {
+router.put('/sprints/:id/add-task/:taskId',getTaskById, async(req, res) => {
     try{
-        const {id, taskId} = req.params
+        const {id} = req.params
+
+        const task = req.task
         
         const sprint = await Sprint.findById(id).populate('tareas')
 
@@ -100,14 +100,8 @@ router.put('/sprints/:id/add-task/:taskId', async(req, res) => {
             res.status(404).json({message: "No fue encontrado el sprint con el id dado"})
             return
         }
-
-        const tareaReferida = await Task.findById(taskId)
         
-        if(!tareaReferida){
-            res.status(404).json({message: "La tarea no existe"})
-            return
-        }
-        sprint.tareas.push(taskId)
+        sprint.tareas.push(task)
 
         await sprint.save()
 

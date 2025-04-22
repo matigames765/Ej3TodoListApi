@@ -6,6 +6,8 @@ const Task = require('../models/Task')
 
 const Sprint = require('../models/Sprint')
 
+const getTaskById = require('../controllers/task.controller')
+
 router.get('/tasks', async(req, res) => {
     try{
         const tasks = await Task.find()
@@ -16,14 +18,9 @@ router.get('/tasks', async(req, res) => {
     }
 })
 
-router.get('/tasks/:id', async(req, res) => {
+router.get('/tasks/:taskId',getTaskById, async(req, res) => {
     try{
-        const taskById = await Task.findById(req.paramas.id)
-
-        if(!taskById){
-            res.status(404).json({message: 'Tarea no encontrada'})
-            return 
-        }
+        const taskById = res.task
 
         return res.json(taskById)
     }catch(error){
