@@ -2,115 +2,23 @@ const express = require('express')
 
 const router = express.Router()
 
-const Sprint = require('../models/Sprint')
+const getSprintById = require('../middlewares/getSprintById')
 
-const Task = require('../models/Task')
+const getTaskById = require('../middlewares/getTaskById')
 
-const getSprintById = require('../controllers/sprint.controller')
+const sprintController = require('../controllers/sprint.controller')
 
-const getTaskById = require('../controllers/task.controller')
+router.get('/sprints', sprintController.getAllSprints)
 
-router.get('/sprints', async(req, res) => {
-    try{
-        const sprints = await Sprint.find().populate('tareas')
+router.get('/sprints/:id',getSprintById, sprintController.getSprint)
 
-        res.status(200).json(sprints)
-    }catch(error){
-        res.status(500).json({message: error.message})
-    }
-})
+router.post('sprints', sprintController.createSprint)
 
-router.get('/sprints/:id',getSprintById,  async(req, res) => {
-    try{
-        
-        const sprint = res.sprint
+router.put('/sprints/:id', sprintController.updateSprint)
 
-        res.status(200).json(sprint)
-    }catch(error){
-        res.status(500).json({message: error.message})
-    }
-})
+router.delete('/sprints/:id', sprintController.deleteSprint)
 
-router.post('sprints', async(req, res) => {
-    const {fechaInicio, fechaCierre, tareas} = req.body
-
-    if(!fechaCierre || !fechaInicio){
-        res.status(404).json({message: "Los campos fechaCierre y fechaInicio son requeridos"})
-        return
-    }
-
-    const sprint = new Sprint({
-        fechaInicio,
-        fechaCierre,
-        tareas,
-    })
-    try{
-        const newSprint = await sprint.save()
-
-        res.status(201).json(newSprint)
-    }catch(error){
-        res.status(500).json({message: error.message})
-    }
-})
-
-router.put('/sprints/:id', async(req, res) => {
-    try{
-        const {id} = req.params
-        const updatedData = req.body
-
-        const updatedSprint = await Sprint.findByIdAndUpdate(id, updatedData, {new: true})
-
-        if(!updatedSprint){
-            res.status(404).json({message: "No fue encontrado el sprint para actualizarlo"})
-        }
-
-        res.status(200).json(updatedSprint)
-    }catch(error){
-        res.status(500).json({message: error.message})
-    }
-})
-
-router.delete('/sprints/:id', async(req, res) => {
-    try{
-        const {id} = req.params
-
-        const deleteSprint = await Sprint.findByIdAndDelete(id)
-
-        if(!deleteSprint){
-            res.status(404).json({message: "No se encontro el sprint para eliminarlo"})
-        }
-
-        res.status(200).json(deleteSprint)
-    }catch(error){
-        res.status(500).json({message: error.message})
-    }
-})
-
-//preguntar por este metodo
-
-router.put('/sprints/:id/add-task/:taskId',getTaskById, async(req, res) => {
-    try{
-        const {id} = req.params
-
-        const task = req.task
-        
-        const sprint = await Sprint.findById(id).populate('tareas')
-
-        if(!sprint){
-            res.status(404).json({message: "No fue encontrado el sprint con el id dado"})
-            return
-        }
-        
-        sprint.tareas.push(task)
-
-        await sprint.save()
-
-        res.status(200).json(sprint)
-
-    }catch(error){
-        res.status(500).json({message: error.message})
-    }
-})
+router.put('/sprints/:id/add-task/:taskId',getTaskById, sprintController.createTaskInSprint)
 
 module.exports = router
 

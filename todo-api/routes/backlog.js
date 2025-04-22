@@ -2,61 +2,18 @@ const express = require('express')
 
 const router = express.Router()
 
-const Backlog = require('../models/Backlog')
+const getTaskById = require('../middlewares/getTaskById')
 
-const Task = require('../models/Task')
+const backlogController = require('../controllers/backlog.controller')
 
-const getTaskById = require('../controllers/task.controller')
+const getBacklogById = require('../middlewares/getBacklogById')
 
-const {getBacklogById, existBacklog} = require('../controllers/backlog.controller')
+router.get('/backlog', backlogController.getAllBacklogs)
 
-router.get('/backlog', async(req, res) => {
-    try{
-        const backlog = await Backlog.find().populate('tareas')
+router.get('/backlog/:id', getBacklogById, backlogController.getBacklog)
 
-        res.status(200).json(backlog)
-    }catch(error){
-        res.status(500).json({message: error.message})
-    }
-})
+router.post(('/backlog'), backlogController.createBacklog)
 
-router.get('/backlog/:id', getBacklogById, async(req, res) => {
-    try{
-        const backlog = res.backlog
-        res.status(200).json(backlog)
-    }catch(error){
-        res.status(500).json({message: error.message})
-    }
-})
-
-router.post(('/backlog'), async(req, res) => {
-    const {tareas} = req.body
-
-    const backlog = new Backlog({
-        tareas
-    })
-    try{
-
-        const newBacklog = await backlog.save()
-
-        res.status(200).json(newBacklog)
-    }catch(error){
-        res.status(500).json({message: error.message})
-    }
-})
-
-router.put('/backlog/add-task/:taskId', getTaskById, async(req, res) => {
-    try{
-        const task = res.task
-
-        const backlog = await Backlog.find().populate('tareas')
-
-        backlog.tareas.push(task)
-
-        res.status(200).json(backlog)
-    }catch(error){
-        res.status(500).json({message: error.message})
-    }
-})
+router.put('/backlog/add-task/:taskId', getTaskById, backlogController.createTaskInBacklog)
 
 module.exports = router

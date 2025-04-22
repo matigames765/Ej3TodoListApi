@@ -1,37 +1,58 @@
 const Backlog = require('../models/Backlog')
 
-const getBacklogById = async(req, res, next) => {
+const getAllBacklogs =  async(req, res) => {
     try{
-        const {id} = req.params
+        const backlog = await Backlog.find().populate('tareas')
 
-        const backlog = await Backlog.findById(id)
-
-        if(!backlog){
-            res.status(404).json({message: `No se encuentra el backlog con el id ${id}`})
-        }
-
-        res.backlog = backlog
-        next()
+        res.status(200).json(backlog)
     }catch(error){
         res.status(500).json({message: error.message})
     }
 }
 
-const existBacklog = async() => {
+const getBacklog =  async(req, res) => {
     try{
-        const backlogs = await Backlog.find()
-
-        if(backlogs.length === 0){
-            const primerBacklog = new Backlog({
-                tareas: [{}]
-            })
-
-            await primerBacklog.save()
-        }
-
+        const backlog = res.backlog
+        res.status(200).json(backlog)
     }catch(error){
-        console.log("Error: " + error)
+        res.status(500).json({message: error.message})
     }
 }
 
-module.exports = {getBacklogById, existBacklog}
+const createBacklog =  async(req, res) => {
+    const {tareas} = req.body
+
+    const backlog = new Backlog({
+        tareas
+    })
+    try{
+
+        const newBacklog = await backlog.save()
+
+        res.status(200).json(newBacklog)
+    }catch(error){
+        res.status(500).json({message: error.message})
+    }
+}
+
+const createTaskInBacklog = async(req, res) => {
+    try{
+        const task = res.task
+
+        const backlog = await Backlog.find().populate('tareas')
+
+        backlog.tareas.push(task)
+
+        res.status(200).json(backlog)
+    }catch(error){
+        res.status(500).json({message: error.message})
+    }
+}
+
+
+module.exports = {
+    getAllBacklogs,
+    getBacklog,
+    createBacklog,
+    createTaskInBacklog
+}

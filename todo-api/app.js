@@ -10,7 +10,7 @@ const tasksRoutes = require('./routes/tasks')
 
 const app = express()
 
-const {getBacklogById, existBacklog} = require('./controllers/backlog.controller')
+const existBacklog = require('./middlewares/existBacklog')
 
 app.use(bodyParser.json())
 
