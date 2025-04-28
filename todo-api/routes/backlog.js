@@ -16,4 +16,6 @@ router.post(('/backlog'), backlogController.createBacklog)
 
 router.put('/backlog/add-task/:taskId', getTaskById, backlogController.createTaskInBacklog)
 
+router.put('/backlog', backlogController.editBacklog)
+
 module.exports = router

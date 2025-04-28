@@ -6,7 +6,7 @@ const existBacklog = async() => {
 
         if(backlogs.length === 0){
             const primerBacklog = new Backlog({
-                tareas: [{}]
+                tareas: []
             })
 
             await primerBacklog.save()

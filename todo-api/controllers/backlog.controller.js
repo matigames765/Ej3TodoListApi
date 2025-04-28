@@ -49,10 +49,24 @@ const createTaskInBacklog = async(req, res) => {
     }
 }
 
+const editBacklog = async(req, res ) => {
+    try{
+        tasks = req.body
+
+        await Backlog.deleteMany({})
+
+        await Backlog.insertMany(tasks)
+
+        res.status(200).json(tasks)
+    }catch(error){
+        res.status(500).json({message: error.message})
+    }
+}
 
 module.exports = {
     getAllBacklogs,
     getBacklog,
     createBacklog,
-    createTaskInBacklog
+    createTaskInBacklog,
+    editBacklog
 }

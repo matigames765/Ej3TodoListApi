@@ -12,13 +12,15 @@ router.get('/sprints', sprintController.getAllSprints)
 
 router.get('/sprints/:id',getSprintById, sprintController.getSprint)
 
-router.post('sprints', sprintController.createSprint)
+router.post('/sprints', sprintController.createSprint)
 
 router.put('/sprints/:id', sprintController.updateSprint)
 
 router.delete('/sprints/:id', sprintController.deleteSprint)
 
 router.put('/sprints/:id/add-task/:taskId',getTaskById, sprintController.createTaskInSprint)
+
+router.put('/sprints', sprintController.editSprintList)
 
 module.exports = router
 

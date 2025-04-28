@@ -100,11 +100,28 @@ const createTaskInSprint = async(req, res) => {
     }
 }
 
+
+const editSprintList = async(req, res) => {
+    try{
+        const {sprints} = req.body
+
+        await Sprint.deleteMany({})
+
+        await Sprint.insertMany(sprints)
+
+        res.status(200).json(sprints)
+        
+    }catch(error){
+        res.status(500).json({message: error.message})
+    }
+}
+
 module.exports = {
     getAllSprints,
     getSprint,
     createSprint,
     updateSprint,
     deleteSprint,
-    createTaskInSprint
+    createTaskInSprint,
+    editSprintList
 }
