@@ -12,7 +12,7 @@ router.get('/backlog', backlogController.getAllBacklogs)
 
 router.get('/backlog/:id', getBacklogById, backlogController.getBacklog)
 
-router.post(('/backlog'), backlogController.createBacklog)
+router.post('/backlog', backlogController.createBacklog)
 
 router.put('/backlog/add-task/:taskId', getTaskById, backlogController.createTaskInBacklog)
 
